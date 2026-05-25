@@ -14,17 +14,17 @@ class Food:
 
 class Fish(Food):
     def __init__(self):
-        super().__init__("Fish", 30, "cat")
+        super().__init__("Fish", 33, "cat")
 
 
 class Bone(Food):
     def __init__(self):
-        super().__init__("Bone", 30, "dog")
+        super().__init__("Bone", 33, "dog")
 
 
 class Bamboo(Food):
     def __init__(self):
-        super().__init__("Bamboo", 30, "panda")
+        super().__init__("Bamboo", 33, "panda")
 
 
 # -----------------------------
