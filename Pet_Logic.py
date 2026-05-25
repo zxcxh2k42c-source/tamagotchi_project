@@ -1,5 +1,6 @@
 import time
 import random
+from datetime import datetime
 
 
 # -----------------------------
@@ -34,14 +35,21 @@ class Pet:
     def __init__(self):
         self.type = random.choice(["cat", "dog", "panda"])
 
-        # статы (0-100)
         self.hunger = 100
         self.energy = 100
         self.happiness = 100
         self.cleanliness = 100
 
+        self.coins = 0
+
         self.last_update = time.time()
         self.sleep_start_time = None
+
+        self.actions_counter = 0 # для еды + игры
+        self.is_dirty = False
+
+        self.birth_date = datetime.now().date()
+        self.last_birthday_reward = None
 
     # -------------------------
     # ОБНОВЛЕНИЕ СОСТОЯНИЯ
@@ -53,10 +61,14 @@ class Pet:
         if hours_passed > 0:
             for _ in range(hours_passed):
                 self.hunger = max(0, self.hunger - 10)
-                self.happiness = max(0, self.happiness - 10)
+
+                if self.is_dirty:
+                    self.happiness = max(0, self.happiness - 20)
+                else:
+                    self.happiness = max(0, self.happiness - 10)
 
             self.last_update += hours_passed * 3600
-
+        self.check_birthday()
     # -------------------------
     # КОРМЛЕНИЕ
     # -------------------------
@@ -66,6 +78,8 @@ class Pet:
             return
 
         self.hunger = min(100, self.hunger + food.nutrition)
+        self.actions_counter += 1
+        self.check_dirty()
 
     # -------------------------
     # ИГРА (счастье)
@@ -73,12 +87,27 @@ class Pet:
     def play(self):
         self.happiness = min(100, self.happiness + 100)
 
+        self.actions_counter += 1
+        self.check_dirty()
+
     # -------------------------
     # ЗЕЛЬЕ ЭНЕРГИИ
     # -------------------------
     def use_energy_potion(self):
         self.energy = 100
 
+    # -------------------------
+    # ГРЯЗЬ
+    # -------------------------
+    def check_dirty(self):
+        if self.actions_counter >= 3:  # 2 игры + 1 еда
+            self.is_dirty = True
+            self.cleanliness = 0
+
+    def clean_pet(self):
+        self.cleanliness = 100
+        self.is_dirty = False
+        self.actions_counter = 0
     # -------------------------
     # СОН
     # -------------------------
@@ -110,6 +139,16 @@ class Pet:
             "happiness": self.happiness,
             "cleanliness": self.cleanliness
         }
+    # -------------------------
+    # ДЕНЬ РОЖДЕНИЯ
+    # -------------------------
+    def check_birthday(self):
+        today = datetime.now().date()
+
+        if today == self.birth_date:
+            if self.last_birthday_reward != today:
+                self.coins += 30
+                self.last_birthday_reward = today
 
 
 # -----------------------------
