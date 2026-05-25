@@ -92,11 +92,13 @@ class Pet:
 
         sleep_duration = time.time() - self.sleep_start_time
 
-        if sleep_duration >= 7200:  # 2 часа
-            self.energy = 100
+        energy_per_second = 100 / 7200
+
+        gained_energy = sleep_duration * energy_per_second
+
+        self.energy = min(100, self.energy + gained_energy)
 
         self.sleep_start_time = None
-
     # -------------------------
     # СОСТОЯНИЕ
     # -------------------------
